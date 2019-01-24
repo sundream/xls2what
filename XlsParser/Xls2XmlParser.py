@@ -5,14 +5,14 @@ from xml.dom.minidom import Document
 class Xls2XmlParser(XlsParser):
     def parse(self):
         indent = self.cfg.get("indent") or 0
-        map_id = self.cfg.get("map_id")
+        id = self.cfg.get("id")
         varname = self.cfg.get("varname")
         encoding = self.cfg.get("encoding") or "utf-8"
         doc = Document()
         startrow = self.sheet.startrow
         root = doc.createElement(varname+"s")
-        if map_id:
-            root.setAttribute("map_id",map_id)
+        if id:
+            root.setAttribute("id",id)
         for row in xrange(startrow,self.sheet.max_row):
             line = self.sheet.line(row)
             line_elem = doc.createElement(varname)

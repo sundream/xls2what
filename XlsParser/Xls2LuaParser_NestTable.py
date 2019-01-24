@@ -2,7 +2,7 @@
 from XlsParser import XlsParser
 from Xls2LuaParser import Xls2LuaParser
 
-class NestTable_Xls2LuaParser(Xls2LuaParser):
+class Xls2LuaParser_NestTable(Xls2LuaParser):
     def __init__(self,sheet,cfg={}):
         nest_id = cfg.get("nest_id")
         nest_fields = cfg.get("nest_fields")
@@ -12,19 +12,19 @@ class NestTable_Xls2LuaParser(Xls2LuaParser):
         fmts = []
         nest_fmts = []
         for col in range(0,sheet.max_col):
-            tag = sheet.col2tag[col]
-            if not tag:
+            if col not in sheet.col2tag:
                 continue
+            tag = sheet.col2tag[col]
             if tag not in nest_fields:
                 if tag != nest_id:
                     fmts.append(colfmt % (tag,tag))
             else:
                 nest_fmts.append(indent + colfmt % (tag,tag))
-        map_id = cfg.get("map_id")
-        if not map_id:
+        id = cfg.get("id")
+        if not id:
             line_start = indent + "{\n"
         else:
-            line_start = indent + "[%%(%s)s] = {\n" % (map_id)
+            line_start = indent + "[%%(%s)s] = {\n" % (id)
         line_start = line_start + "%(nestline)s\n"
         line_end = "\n" + indent + "}"
         linefmt = line_start + ",\n".join(fmts) + line_end
@@ -40,7 +40,7 @@ class NestTable_Xls2LuaParser(Xls2LuaParser):
 
     def lines(self):
         startrow = self.sheet.startrow
-        idkey = self.cfg.get("id")
+        outer_id = self.cfg.get("outer_id")
         nestlinefmt = self.cfg.get("nestlinefmt")
         linefmt = self.cfg.get("linefmt")
         firstline_row = None
@@ -51,7 +51,7 @@ class NestTable_Xls2LuaParser(Xls2LuaParser):
         for row in xrange(startrow,self.sheet.max_row):
             line = self.line(row)
             line2 = self.linefmt(nestlinefmt,line,row)
-            if lastid == None or (line[idkey] != None and lastid != line[idkey]):
+            if lastid == None or (line[outer_id] != None and lastid != line[outer_id]):
                 if firstline != None:
                     nestline = "\n".join(nestlines)
                     firstline["nestline"] = nestline
@@ -60,7 +60,7 @@ class NestTable_Xls2LuaParser(Xls2LuaParser):
                     nestlines = []
                     firstline = None
                     firstline_row = None
-                lastid = line[idkey]
+                lastid = line[outer_id]
                 firstline = line
                 firstline_row = row
             nestlines.append(line2)

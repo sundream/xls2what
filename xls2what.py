@@ -27,10 +27,10 @@ e.g:
         parser_package = getattr(mod,"parser_package")
         if parser_package is not None:
             exec("from " + parser_package + " import *")
-    config = mod.config
+    export = mod.export
 
-    for elem in config:
-        xls_filename = elem["xls_filename"]
+    for task in export:
+        xls_filename = task["xls_filename"]
         if limit and not xls_filename in limit:
             print(readable("ignore %s" % (xls_filename)))
             continue
@@ -38,7 +38,7 @@ e.g:
         sheets = {}
         for sheet_name,sheet_data in sheet_list:
             sheets[sheet_name] = sheet_data
-        for cfg in elem["sheets"]:
+        for cfg in task["sheets"]:
             sheet_name = cfg["sheet_name"]
             sheet_data = sheets.get(sheet_name.decode("utf-8"))
             if not sheet_data:

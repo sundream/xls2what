@@ -14,12 +14,12 @@ class Xls2JsonParser(XlsParser):
     def parse(self):
         lines = self.lines()
         indent = self.cfg.get("indent")
-        map_id = self.cfg.get("map_id")
-        if not map_id:
+        id = self.cfg.get("id")
+        if not id:
             return json.dumps(lines,indent=indent)
         else:
             dct = {}
             for line in lines:
-                id = line[map_id]
-                dct[id] = line
+                id_value = line[id]
+                dct[id_value] = line
             return json.dumps(dct,indent=indent)

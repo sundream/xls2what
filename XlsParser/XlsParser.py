@@ -44,7 +44,7 @@ class XlsParser(object):
 
     def parse(self):
         lines = self.lines()
-        return "{\n" + "\n,".join(lines) + "\n}"
+        return "{\n" + ",\n".join(lines) + "\n}"
 
     def _write(self,filename,data):
         parent_dir = os.path.dirname(filename)

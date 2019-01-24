@@ -21,6 +21,8 @@ class Sheet(object):
         self.tagrow = cfg.get("tagrow",1)
         self.typerow = cfg.get("typerow",2)
         self.startrow = cfg.get("startrow",3)
+        self.tag_alias = cfg.get("tag_alias")
+        self.exclude_tags = cfg.get("exclude_tags")
         self.values = values
         self.tag2col = {}
         self.col2tag = {}
@@ -32,16 +34,21 @@ class Sheet(object):
         col = 0
         while col < self.max_col:
             if (self.tagrow,col) in self.values:
-                v = self.values[(self.tagrow,col)]
-                ok,v = checktype(v,"string")
-                assert ok,v
-                self.tag2col[v] = col
-                self.col2tag[col] = v
+                tag = self.values[(self.tagrow,col)]
+                ok,tag = checktype(tag,"string")
+                assert ok,tag
+                if self.exclude_tags and tag in self.exclude_tags:
+                    col += 1
+                    continue
+                if self.tag_alias and self.tag_alias.get(tag):
+                    tag = self.tag_alias[tag]
+                self.tag2col[tag] = col
+                self.col2tag[col] = tag
             if (self.typerow,col) in self.values:
-                v = self.values[(self.typerow,col)]
-                ok,v = checktype(v,"string")
-                assert ok,v
-                self.col2type[col] = v
+                typename = self.values[(self.typerow,col)]
+                ok,typename = checktype(typename,"string")
+                assert ok,typename
+                self.col2type[col] = typename
             col += 1
         #print("Sheet.__init__",self.tagrow,self.tag2col,self.col2tag,self.max_row,self.max_col)
 
@@ -67,8 +74,10 @@ class Sheet(object):
     def line(self,row):
         ret = {}
         for col in range(0,self.max_col):
-            if col in self.col2tag:
-                ret[self.col2tag[col]] = self.value(row,col)
+            if col not in self.col2tag:
+                continue
+            tag = self.col2tag[col]
+            ret[tag] = self.value(row,col)
         return ret
 
     def register_parser(self,row,col,func):
