@@ -8,8 +8,8 @@ def main():
     usage = \
 """usage: python %prog [options]
 e.g:
-    python %prog --config=config
-    python %prog --config=config --limit=test.xls,nest_test.xls"""
+    python %prog --config=config_example
+    python %prog --config=config_exmaple --limit=test.xls,nest_test.xls"""
     parser = optparse.OptionParser(usage=usage,version="%prog 0.0.1")
     parser.add_option("-c","--config",help="[required] python config file")
     parser.add_option("-l","--limit",help="[optional] qualify which xls need to export data,default is no limit")
@@ -20,6 +20,8 @@ e.g:
             parser.error("option '%s' required" % r)
     config = options.config
     limit = options.limit
+    if config.endswith(".py"):
+        config = config[:-3]
     if limit:
         limit = string.split(limit,",")
     mod = __import__(config)
@@ -51,9 +53,11 @@ e.g:
             ParserClass = eval(cfg["parser"])
             parser = ParserClass(sheet,cfg)
             data = parser.parse()
+            out_filename = "none"
             if cfg.get("filename"):
-                parser.write(cfg.get("filename"),data)
-            print(readable("parser %s#%s ok" % (xls_filename,sheet_name)))
+                out_filename = cfg.get("filename")
+                parser.write(out_filename,data)
+            print(readable("parser %s#%s to %s" % (xls_filename,sheet_name,out_filename)))
 
 if __name__ == "__main__":
     main()
