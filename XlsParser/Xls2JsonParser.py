@@ -16,10 +16,10 @@ class Xls2JsonParser(XlsParser):
         indent = self.cfg.get("indent")
         id = self.cfg.get("id")
         if not id:
-            return json.dumps(lines,indent=indent)
+            return json.dumps(lines, indent=indent, ensure_ascii=False)
         else:
             dct = {}
             for line in lines:
                 id_value = line[id]
                 dct[id_value] = line
-            return json.dumps(dct,indent=indent)
+            return json.dumps(dct, indent=indent, ensure_ascii=False)
