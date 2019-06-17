@@ -28,7 +28,13 @@ class Xls2PyParser(XlsParser):
             col = self.sheet.tag2col[col_name]
             typename = self.sheet.col2type[col]
             if typename == "string":
-                line[col_name] = repr(v)
+                if v.find("'") != -1:
+                    v = '"' + v + '"'
+                elif v.find('"') != -1:
+                    v = "'" + v + "'"
+                else:
+                    v = '"' + v + '"'
+                line[col_name] = v
         return line
 
     def parse(self):

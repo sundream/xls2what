@@ -7,7 +7,7 @@ class Xls2XmlParser(XlsParser):
         indent = self.cfg.get("indent") or 0
         id = self.cfg.get("id")
         varname = self.cfg.get("varname")
-        encoding = self.cfg.get("encoding") or "utf-8"
+        encoding = self.cfg.get("encoding")
         doc = Document()
         startrow = self.sheet.startrow
         root = doc.createElement(varname+"s")

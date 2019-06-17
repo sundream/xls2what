@@ -70,7 +70,7 @@ def checktype(obj,typename):
         if typename == "string":
             if typ != str:
                 return False,"expect type %r,got %r" % (typename,obj)
-            return True,str(obj)
+            return True,obj
         if typename == "raw":
             return True,obj
     return False,"unknow type: %r" % (typename)

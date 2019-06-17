@@ -31,7 +31,12 @@ class Py2Lua(object):
             return str(obj)
 
         if isinstance(obj, self.string_types):
-            return repr(obj)
+            if obj.find("'") != -1:
+                return '"' + obj + '"'
+            elif obj.find('"') != -1:
+                return "'" + obj + "'"
+            return '"' + obj + '"'
+            #return repr(obj)
 
         if isinstance(obj, self.table_array_types):
             s = []

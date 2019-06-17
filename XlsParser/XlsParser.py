@@ -97,5 +97,6 @@ class XlsParser(object):
         lst = traceback.extract_stack(limit=3)
         lst = lst[1]
         filename,lineno,func_name = lst[0],lst[1],lst[2]
+        filename = os.path.split(filename)[-1]
         msg = "sheet: %s#%s parser: %s:%s:%s" % (self.sheet.xls_filename,self.sheet.name,filename,lineno,func_name)
         return msg

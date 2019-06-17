@@ -23,6 +23,12 @@ class Sheet(object):
         self.startrow = cfg.get("startrow",3)
         self.tag_alias = cfg.get("tag_alias")
         self.exclude_tags = cfg.get("exclude_tags")
+        self.default = cfg.get("default") or {
+            "bool" : False,
+            "int" : 0,
+            "float" : 0.0,
+            "string" : "",
+        }
         self.values = values
         self.tag2col = {}
         self.col2tag = {}
@@ -59,7 +65,8 @@ class Sheet(object):
         if type(col) == str:
             col = self.tag2col[col]
         typename = self.col2type[col]
-        val = self.values.get((row,col),None)
+        default = self.default.get(typename,None)
+        val = self.values.get((row,col),default)
         ok,val = checktype(val,typename)
         if not ok:
             raise Exception(self.message(row,col,val))
